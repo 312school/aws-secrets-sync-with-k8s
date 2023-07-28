@@ -37,7 +37,7 @@ Integration: AWS SecretsManager + K8s Secrets
 - https://docs.aws.amazon.com/secretsmanager/latest/userguide/integrating_csi_driver.html
 
 
-1. Follow above tutorial but with `--set syncSecret.enabled=true` option
+**1. Follow above tutorial but with `--set syncSecret.enabled=true` option**
 ```
 helm repo add secrets-store-csi-driver https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
 helm install -n kube-system csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver --set syncSecret.enabled=true
@@ -46,18 +46,18 @@ helm repo add aws-secrets-manager https://aws.github.io/secrets-store-csi-driver
 helm install -n kube-system secrets-provider-aws aws-secrets-manager/secrets-store-csi-driver-provider-aws
 ```
 
-2. Create variables locally (adjust values as necessary)
+**2. Create variables locally** (adjust values as necessary)
 ```
 REGION=us-east-1
 CLUSTERNAME=eks-dev
 ```
 
-3. Create secret (adjust values if necessary)
+**3. Create secret** (adjust values if necessary)
 ```
 aws --region "$REGION" secretsmanager  create-secret --name exchange-app-db-secrets --secret-string '{"dbuser":"myadmin", "dbpassword":"superpass"}'
 ```
 
-4. Create iam policy that provides access to above secret. Make sure to replace below secret arn with your current secret ARN
+**4. Create iam policy that provides access to above secret.** Make sure to replace below secret arn with your current secret ARN
 ```
 POLICY_ARN=$(aws --region "$REGION" --query Policy.Arn --output text iam create-policy --policy-name nginx-deployment-policy --policy-document '{
     "Version": "2012-10-17",
@@ -75,35 +75,35 @@ POLICY_ARN=$(aws --region "$REGION" --query Policy.Arn --output text iam create-
     
     `pod <= serviceaccount <= IAM role`
 
-5. Create OIDC provider for the cluster - required to link IAM roles to service accounts.
+**5. Create OIDC provider for the cluster** - required to link IAM roles to service accounts.
 *Optional if it was already created - only 1 per cluster is necessary.*
 ```
 eksctl utils associate-iam-oidc-provider --region="$REGION" --cluster="$CLUSTERNAME" --approve 
 ```
 
-6. Create service account linked to an IAM role, and attach IAM policy that gives access to the created secret
+**6. Create service account linked to an IAM role,** and attach IAM policy that gives access to the created secret
 ```
 eksctl create iamserviceaccount --name nginx-deployment-sa --region="$REGION" --cluster "$CLUSTERNAME" --attach-policy-arn "$POLICY_ARN" --approve --override-existing-serviceaccounts
 ```
 
-6. Create the SecretProviderClass - this typically has to be created for each secret you're trying link (AWS => K8s secret)
+**6. Create the SecretProviderClass** - this typically has to be created for each secret you're trying link (AWS => K8s secret)
 ```
 kubectl apply -f deploy-with-mounted-files/ExampleSecretProviderClassMountedSecretFile.yaml
 ```
 
 
-7. Deploy consumer pod - pod that starts using this secret: 
+**7. Deploy consumer pod** - pod that starts using this secret: 
 ```
 kubectl apply -f deploy-with-mounted-files/ExampleDeploymentMountedSecretFile.yaml
 ```
 
 # To use AWS SecretsManager values as env variables
-8. Delete current SecretProviderClass and create a new one with this file
+**8. Delete current SecretProviderClass and create a new one with this file**
 ```
 kubectl apply -f deploy-with-env/ExampleSecretProviderClassMountedSecretEnv.yaml
 ```
 
-9. Delete current Deployment and create a new one with this file
+**9. Delete current Deployment and create a new one with this file**
 ```
 kubectl apply -f deploy-with-env/ExampleDeploymentMountedSecretEnv.yaml
 ```
