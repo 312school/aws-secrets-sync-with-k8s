@@ -86,24 +86,24 @@ eksctl utils associate-iam-oidc-provider --region="$REGION" --cluster="$CLUSTERN
 eksctl create iamserviceaccount --name nginx-deployment-sa --region="$REGION" --cluster "$CLUSTERNAME" --attach-policy-arn "$POLICY_ARN" --approve --override-existing-serviceaccounts
 ```
 
-**6. Create the SecretProviderClass** - this typically has to be created for each secret you're trying link (AWS => K8s secret)
+**7. Create the SecretProviderClass** - this typically has to be created for each secret you're trying link (AWS => K8s secret)
 ```
 kubectl apply -f deploy-with-mounted-files/ExampleSecretProviderClassMountedSecretFile.yaml
 ```
 
 
-**7. Deploy consumer pod** - pod that starts using this secret: 
+**8. Deploy consumer pod** - pod that starts using this secret: 
 ```
 kubectl apply -f deploy-with-mounted-files/ExampleDeploymentMountedSecretFile.yaml
 ```
 
 # To use AWS SecretsManager values as env variables
-**8. Delete current SecretProviderClass and create a new one with this file**
+**9. Delete current SecretProviderClass and create a new one with this file**
 ```
 kubectl apply -f deploy-with-env/ExampleSecretProviderClassMountedSecretEnv.yaml
 ```
 
-**9. Delete current Deployment and create a new one with this file**
+**10. Delete current Deployment and create a new one with this file**
 ```
 kubectl apply -f deploy-with-env/ExampleDeploymentMountedSecretEnv.yaml
 ```
