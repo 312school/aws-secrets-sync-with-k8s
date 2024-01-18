@@ -81,7 +81,7 @@ POLICY_ARN=$(aws --region "$REGION" --query Policy.Arn --output text iam create-
 eksctl utils associate-iam-oidc-provider --region="$REGION" --cluster="$CLUSTERNAME" --approve 
 ```
 
-**6. Create service account linked to an IAM role,** and attach IAM policy that gives access to the created secret
+**6. Use `--namespace` to create SA in custom namespace. Create service account linked to an IAM role,** and attach IAM policy that gives access to the created secret
 ```
 eksctl create iamserviceaccount --name nginx-deployment-sa --region="$REGION" --cluster "$CLUSTERNAME" --attach-policy-arn "$POLICY_ARN" --approve --override-existing-serviceaccounts
 ```
