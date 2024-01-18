@@ -57,7 +57,7 @@ CLUSTERNAME=eks-dev
 aws --region "$REGION" secretsmanager  create-secret --name exchange-app-db-secrets --secret-string '{"dbuser":"myadmin", "dbpassword":"superpass"}'
 ```
 
-**4. Create iam policy that provides access to above secret.** Make sure to replace below secret arn with your current secret ARN
+**4. Make sure to replace below secret arn with your current secret ARN, and then Create iam policy that provides access to above secret.** 
 ```
 POLICY_ARN=$(aws --region "$REGION" --query Policy.Arn --output text iam create-policy --policy-name nginx-deployment-policy --policy-document '{
     "Version": "2012-10-17",
